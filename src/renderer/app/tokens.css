@@ -1,0 +1,58 @@
+/*
+ * v1.0.0 唯一 token 来源。
+ * 除本文件外，渲染层 CSS 不得出现十六进制或 rgba 颜色字面量。
+ * 规格见 docs/prd/latest.md §4.2。
+ */
+:root {
+  color-scheme: dark;
+
+  --bg-0: #0e1114;
+  --bg-1: #15191d;
+  --bg-2: #1c2228;
+  --bg-3: #242c33;
+  --border-0: #2a323a;
+
+  --text-0: #e8edf2;
+  --text-1: #9aa7b2;
+  --text-2: #5f6b76;
+
+  --accent: #4f8cff;
+  --ok: #3fbf6f;
+  --warn: #e6b34d;
+  --crit: #e05b4d;
+
+  --stage-bg: #0a0d10;
+  --stage-ink: #ffffff;
+
+  --font-ui: "Inter", "Segoe UI", "PingFang SC", "Noto Sans SC", "Microsoft YaHei", sans-serif;
+  --font-num: "Inter", "Segoe UI", "PingFang SC", sans-serif;
+
+  --text-xs: 12px;
+  --text-sm: 13px;
+  --text-md: 15px;
+  --text-lg: 17px;
+  --text-xl: 22px;
+  --text-2xl: 26px;
+
+  --space-1: 4px;
+  --space-2: 8px;
+  --space-3: 12px;
+  --space-4: 16px;
+  --space-5: 24px;
+  --space-6: 32px;
+
+  --radius-panel: 6px;
+  --radius-control: 4px;
+  --radius-pill: 999px;
+  --row-h: 28px;
+  --topbar-h: 48px;
+  --statusbar-h: 32px;
+  --dock-left-w: 264px;
+  --dock-right-w: 340px;
+  --dock-rail-w: 40px;
+  --control-gap: var(--space-3);
+
+  --line: 1px solid var(--border-0);
+  --focus-ring: 0 0 0 2px var(--accent);
+  --transition: 140ms ease;
+}

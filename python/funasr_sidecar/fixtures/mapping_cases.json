@@ -1,0 +1,156 @@
+{
+  "hotwords": [
+    {
+      "name": "中文去重并丢掉空白",
+      "input": ["直播间", " 价格 ", "直播间", "", "   "],
+      "expected": "{\"直播间\":20,\"价格\":20}"
+    },
+    {
+      "name": "空数组",
+      "input": [],
+      "expected": "{}"
+    },
+    {
+      "name": "官方示例词统一权重",
+      "input": ["阿里巴巴", "通义实验室"],
+      "weight": 20,
+      "expected": "{\"阿里巴巴\":20,\"通义实验室\":20}"
+    }
+  ],
+  "results": [
+    {
+      "name": "2pass-online 不抄官方 is_final",
+      "payload": {
+        "mode": "2pass-online",
+        "wav_name": "sid",
+        "text": "大家好",
+        "is_final": true,
+        "timestamp": "[[0,200]]",
+        "stamp_sents": []
+      },
+      "sessionId": "sid",
+      "startMs": 0,
+      "endMs": 600,
+      "providerResultId": "online-1",
+      "expected": {
+        "type": "result",
+        "sessionId": "sid",
+        "providerResultId": "online-1",
+        "startMs": 0,
+        "endMs": 600,
+        "text": "大家好",
+        "isFinal": false
+      }
+    },
+    {
+      "name": "2pass-offline 才是盯播 final",
+      "payload": {
+        "mode": "2pass-offline",
+        "wav_name": "sid",
+        "text": "大家好。",
+        "is_final": false,
+        "timestamp": "[[100,200],[200,500]]"
+      },
+      "sessionId": "sid",
+      "startMs": 0,
+      "endMs": 2000,
+      "providerResultId": "offline-1",
+      "expected": {
+        "type": "result",
+        "sessionId": "sid",
+        "providerResultId": "offline-1",
+        "startMs": 0,
+        "endMs": 2000,
+        "text": "大家好。",
+        "isFinal": true
+      }
+    },
+    {
+      "name": "online",
+      "payload": {"mode": "online", "wav_name": "sid", "text": "欢迎", "is_final": true},
+      "sessionId": "sid",
+      "startMs": 20,
+      "endMs": 520,
+      "providerResultId": "online-2",
+      "expected": {
+        "type": "result",
+        "sessionId": "sid",
+        "providerResultId": "online-2",
+        "startMs": 20,
+        "endMs": 520,
+        "text": "欢迎",
+        "isFinal": false
+      }
+    },
+    {
+      "name": "offline 文档里的 is_final 恒为 false，盯播仍提交",
+      "payload": {"mode": "offline", "wav_name": "sid", "text": "今天的价格", "is_final": false},
+      "sessionId": "sid",
+      "startMs": 0,
+      "endMs": 1800,
+      "providerResultId": "offline-2",
+      "expected": {
+        "type": "result",
+        "sessionId": "sid",
+        "providerResultId": "offline-2",
+        "startMs": 0,
+        "endMs": 1800,
+        "text": "今天的价格",
+        "isFinal": true
+      }
+    },
+    {
+      "name": "AutoModel 流式片段",
+      "payload": {"text": "欢迎来到"},
+      "automodelIsFinal": false,
+      "sessionId": "sid",
+      "startMs": 0,
+      "endMs": 600,
+      "providerResultId": "am-partial-1",
+      "expected": {
+        "type": "result",
+        "sessionId": "sid",
+        "providerResultId": "am-partial-1",
+        "startMs": 0,
+        "endMs": 600,
+        "text": "欢迎来到",
+        "isFinal": false
+      }
+    },
+    {
+      "name": "AutoModel 末块是数组",
+      "payload": [{"text": "欢迎来到"}, {"text": "直播间"}],
+      "automodelIsFinal": true,
+      "sessionId": "sid",
+      "startMs": 600,
+      "endMs": 1200,
+      "providerResultId": "am-final-1",
+      "expected": {
+        "type": "result",
+        "sessionId": "sid",
+        "providerResultId": "am-final-1",
+        "startMs": 600,
+        "endMs": 1200,
+        "text": "欢迎来到直播间",
+        "isFinal": true
+      }
+    }
+  ],
+  "wsStart": [
+    {
+      "name": "盯播 start 译成 2pass 首包",
+      "sessionId": "sid",
+      "hotwords": ["阿里巴巴", "通义实验室"],
+      "expected": {
+        "mode": "2pass",
+        "wav_name": "sid",
+        "is_speaking": true,
+        "wav_format": "pcm",
+        "chunk_size": [5, 10, 5],
+        "audio_fs": 16000,
+        "hotwords": "{\"阿里巴巴\":20,\"通义实验室\":20}",
+        "itn": true
+      }
+    }
+  ]
+}

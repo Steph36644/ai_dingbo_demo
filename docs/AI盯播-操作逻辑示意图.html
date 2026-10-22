@@ -1,0 +1,186 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>AI盯播 · 操作逻辑示意图 v1.0.0</title>
+<style>
+  :root {
+    --bg-0: #0e1114; --bg-1: #15191d; --bg-2: #1c2228; --bg-3: #242c33;
+    --border: #2a323a; --text-0: #e8edf2; --text-1: #9aa7b2; --text-2: #5f6b76;
+    --accent: #4f8cff; --ok: #3fbf6f; --warn: #e6b34d; --crit: #e05b4d;
+    --radius: 8px;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    background: var(--bg-0); color: var(--text-0);
+    font: 400 14px/1.7 "Inter","Segoe UI","PingFang SC","Noto Sans SC","Microsoft YaHei",sans-serif;
+    padding: 40px 24px 64px;
+  }
+  .wrap { max-width: 1080px; margin: 0 auto; }
+  header { margin-bottom: 36px; }
+  header h1 { font-size: 22px; font-weight: 600; letter-spacing: .5px; }
+  header p { color: var(--text-1); font-size: 13px; margin-top: 6px; }
+  h2 {
+    font-size: 15px; font-weight: 600; color: var(--text-0);
+    margin: 36px 0 14px; padding-left: 10px; border-left: 3px solid var(--accent);
+  }
+  h2 small { color: var(--text-2); font-weight: 400; font-size: 12px; margin-left: 8px; }
+
+  /* ── 主流程：5 步 ── */
+  .flow { display: flex; align-items: stretch; gap: 0; flex-wrap: wrap; }
+  .step {
+    flex: 1 1 180px; min-width: 170px; background: var(--bg-1);
+    border: 1px solid var(--border); border-radius: var(--radius);
+    padding: 14px 14px 12px; position: relative;
+  }
+  .step + .step { margin-left: 26px; }
+  .step + .step::before {
+    content: "→"; position: absolute; left: -22px; top: 50%; transform: translateY(-50%);
+    color: var(--text-2); font-size: 15px;
+  }
+  .step .no {
+    display: inline-block; font-size: 11px; color: var(--accent);
+    border: 1px solid var(--border); border-radius: 999px; padding: 0 8px; margin-bottom: 6px;
+  }
+  .step h3 { font-size: 14px; font-weight: 600; margin-bottom: 4px; }
+  .step p { font-size: 12px; color: var(--text-1); line-height: 1.6; }
+  .step.hot { border-color: var(--accent); }
+  .step.hot .no { color: #fff; background: var(--accent); border-color: var(--accent); }
+
+  /* ── 核心循环管线 ── */
+  .pipeline {
+    background: var(--bg-1); border: 1px dashed var(--border);
+    border-radius: 12px; padding: 18px 20px 20px;
+  }
+  .pipeline .cap { font-size: 12px; color: var(--text-1); margin-bottom: 14px; }
+  .pipeline .cap b { color: var(--accent); font-weight: 600; }
+  .chain { display: flex; align-items: center; gap: 0; flex-wrap: wrap; }
+  .node {
+    background: var(--bg-2); border: 1px solid var(--border); border-radius: var(--radius);
+    padding: 9px 13px; font-size: 13px; white-space: nowrap;
+  }
+  .node small { display: block; font-size: 11px; color: var(--text-2); }
+  .node + .node { margin-left: 30px; position: relative; }
+  .node + .node::before {
+    content: "→"; position: absolute; left: -24px; top: 50%; transform: translateY(-50%);
+    color: var(--text-2); font-size: 14px;
+  }
+  .node.brand { border-color: var(--accent); color: #cfe1ff; }
+  .loopnote { margin-top: 12px; font-size: 12px; color: var(--warn); }
+
+  /* ── 双端 ── */
+  .surfaces { display: flex; gap: 20px; flex-wrap: wrap; margin-top: 16px; }
+  .surface { flex: 1 1 320px; background: var(--bg-1); border: 1px solid var(--border); border-radius: 12px; overflow: hidden; }
+  .surface > .bar { padding: 9px 14px; font-size: 12px; color: var(--text-1); background: var(--bg-2); border-bottom: 1px solid var(--border); display: flex; justify-content: space-between; align-items: center; }
+  .surface > .bar b { color: var(--text-0); font-size: 13px; }
+  .tag { font-size: 10px; border-radius: 999px; padding: 1px 8px; border: 1px solid var(--border); color: var(--text-2); }
+  .tag.acc { color: var(--accent); border-color: var(--accent); }
+  .surface ul { list-style: none; padding: 10px 14px 12px; }
+  .surface li { font-size: 12.5px; color: var(--text-1); padding: 3px 0 3px 14px; position: relative; }
+  .surface li::before { content: ""; position: absolute; left: 0; top: 11px; width: 6px; height: 6px; border-radius: 2px; background: var(--text-2); }
+  .surface li.on { color: var(--text-0); }
+  .surface li.on::before { background: var(--accent); }
+  .linkline { text-align: center; color: var(--text-2); font-size: 12px; margin: 10px 0 2px; }
+  .linkline b { color: var(--accent); font-weight: 500; }
+
+  /* ── 边界 ── */
+  .rules { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 14px; }
+  .rule { background: var(--bg-1); border: 1px solid var(--border); border-radius: var(--radius); padding: 12px 14px; }
+  .rule b { display: block; font-size: 13px; font-weight: 600; margin-bottom: 3px; }
+  .rule span { font-size: 12px; color: var(--text-1); }
+  .rule.dim { border-style: dashed; }
+  .rule.dim b { color: var(--text-2); }
+  footer { margin-top: 40px; font-size: 12px; color: var(--text-2); }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header>
+    <h1>AI盯播 · 操作逻辑示意图</h1>
+    <p>v1.0.0 · 听本机直播声 → 转写 → 对照话术框架 → 告诉你「讲偏了什么」 · 只做抖音直播 · 内容盯播，不是 GMV 总控</p>
+  </header>
+
+  <h2>一、端到端主流程 <small>开播前 → 复盘，五步闭环</small></h2>
+  <div class="flow">
+    <div class="step">
+      <span class="no">STEP 1</span>
+      <h3>准备 · 开播前</h3>
+      <p>加载话术框架（必讲 / 触雷 / 语速 / 阶段）· 选音源 · 选 ASR · 健康预检<br>预检失败 → 不可开始</p>
+    </div>
+    <div class="step">
+      <span class="no">STEP 2</span>
+      <h3>开始盯播</h3>
+      <p>环回采音（PCM）→ 流式转写 → 字幕成句展示（标点 + 800ms 静音断句）</p>
+    </div>
+    <div class="step hot">
+      <span class="no">STEP 3</span>
+      <h3>盯播循环</h3>
+      <p>每 1 分钟分析近 5 分钟：语速 / 节奏 / 内容 → 问题卡 → 中控处置</p>
+    </div>
+    <div class="step">
+      <span class="no">STEP 4</span>
+      <h3>停止落盘</h3>
+      <p>JSONL 写入 sessions/&lt;场次&gt;/<br>写盘失败 → 保留内存并提示</p>
+    </div>
+    <div class="step">
+      <span class="no">STEP 5</span>
+      <h3>只读复盘</h3>
+      <p>字幕摘要 + 问题卡（历次证据展开）· 场次目录 · 再盯一场不删文件</p>
+    </div>
+  </div>
+
+  <h2>二、盯播中的核心循环 <small>引擎只跑一套，双端只是投影</small></h2>
+  <div class="pipeline">
+    <div class="cap">盯播引擎 · <b>主进程是唯一真相</b>，任何界面不跑第二套规则</div>
+    <div class="chain">
+      <div class="node">环回采音<small>本机正在播的声音</small></div>
+      <div class="node">ASR 转写<small>FunASR / 讯飞</small></div>
+      <div class="node">滑动窗口<small>近 5 分钟文稿</small></div>
+      <div class="node">规则引擎<small>内容 · 语速 · 节奏</small></div>
+      <div class="node">问题卡<small>指纹聚合 · 带证据</small></div>
+      <div class="node brand">投影 SessionProjection<small>阶段 · 角标 · 建议 · 健康</small></div>
+    </div>
+    <div class="loopnote">↻ 每 1 分钟重复一次分析（窗口 5 分钟 / 间隔 1 分钟，可在设置调整）</div>
+  </div>
+
+  <div class="surfaces">
+    <div class="surface">
+      <div class="bar"><b>Control · 中控盯播台</b><span class="tag">可操作</span></div>
+      <ul>
+        <li class="on">问题时间轴 + 转写证据 + 框架命中</li>
+        <li class="on">讲点覆盖（必讲已讲 / 未讲）</li>
+        <li class="on">处置：阶段切换 · pin · dismiss · 已读</li>
+        <li class="on">品备注 · 直播笔记（旁路记录）</li>
+        <li class="on">抬头屏控制 · 开始 / 停止 · 设置 · 回看</li>
+        <li>底部状态栏：状态 / 时长 / 落盘 / 未读</li>
+      </ul>
+    </div>
+    <div class="surface">
+      <div class="bar"><b>Stage · 抬头大屏</b><span class="tag acc">只读</span></div>
+      <ul>
+        <li class="on">当前阶段（大字）</li>
+        <li class="on">未读角标（数字）</li>
+        <li class="on">至多一条建议（pin 可盖过自动选）</li>
+        <li>健康点（进行中 / 不稳定 / 已停）</li>
+        <li>成句字幕流（底部对齐）</li>
+        <li>没有设置、密钥、时间轴、JSONL</li>
+      </ul>
+    </div>
+  </div>
+  <div class="linkline">同一份投影 ↓ 不同带宽：中控看「为什么」，大屏看「怎么办」</div>
+
+  <h2>三、窗口语义与边界 <small>什么时候谁在、谁关</small></h2>
+  <div class="rules">
+    <div class="rule"><b>打开抬头屏</b><span>Control 显式选屏 → 窗口（排练）或全屏；全屏不占 Control 所在屏</span></div>
+    <div class="rule"><b>关 Stage / Esc</b><span>会话继续，字幕和问题照常更新</span></div>
+    <div class="rule"><b>停止 / 关 Control</b><span>会话结束，Stage 一并拆掉，不留孤儿大屏</span></div>
+    <div class="rule"><b>显示器断开</b><span>Stage 关、会话在，提示「抬头屏断开，盯播还在」</span></div>
+    <div class="rule dim"><b>M6 · 信号区（空位）</b><span>推流 / 发券信号：出站前必须人工确认 — 本版不实现</span></div>
+    <div class="rule dim"><b>M7 · 可选闭麦（空位）</b><span>avoid 命中仍只提醒；闭麦默认关 — 本版不实现</span></div>
+  </div>
+
+  <footer>AI盯播 PRD v1.0.0 配图 · 引擎口径见 docs/prd/latest.md · 生成于 2026-10-20</footer>
+</div>
+</body>
+</html>

@@ -1,0 +1,155 @@
+/* 问题警告方案与判定展示。颜色/字号/间距走 tokens.css。 */
+.issue-rule-panel {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+}
+
+.issue-rule-bar {
+  display: grid;
+  gap: var(--space-2);
+  padding: var(--space-3);
+  border: var(--line);
+  border-radius: var(--radius-panel);
+}
+
+.issue-rule-bar label {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-1);
+  font-size: var(--text-xs);
+  color: var(--text-2);
+}
+
+.issue-rule-bar input,
+.issue-rule-bar select {
+  width: 100%;
+}
+
+.issue-rule-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-2);
+}
+
+.issue-rule-fields {
+  padding-top: var(--space-2);
+  border-top: var(--line);
+}
+
+.issue-rule-fields summary {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  list-style: none;
+  cursor: pointer;
+  color: var(--text-1);
+  font-size: var(--text-sm);
+}
+
+/* 收起时是向右的箭头，展开后变成向下；与全局折叠控件保持同一图案与尺寸。 */
+.issue-rule-fields summary::-webkit-details-marker {
+  display: none;
+}
+
+.issue-rule-fields summary::before {
+  content: "";
+  flex: 0 0 auto;
+  width: 5px;
+  height: 5px;
+  border-right: 1.5px solid currentColor;
+  border-bottom: 1.5px solid currentColor;
+  transform: rotate(-45deg);
+  transition: transform var(--transition);
+}
+
+.issue-rule-fields[open] > summary::before {
+  transform: rotate(45deg);
+}
+
+.issue-rule-fields summary:hover {
+  color: var(--text-0);
+}
+
+.issue-rule-fields h3 {
+  margin: var(--space-3) 0 var(--space-1);
+  font-size: var(--text-xs);
+  color: var(--text-2);
+  font-weight: 600;
+}
+
+.issue-rule-fields > label {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-1);
+  margin-top: var(--space-2);
+  font-size: var(--text-xs);
+  color: var(--text-2);
+}
+
+.keyword-row,
+.custom-rule {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-1);
+  padding: var(--space-2) 0;
+  border-bottom: var(--line);
+}
+
+.keyword-row small,
+.custom-rule small {
+  color: var(--text-2);
+  font-size: var(--text-xs);
+  overflow-wrap: anywhere;
+}
+
+.rule-display-row {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  font-size: var(--text-sm);
+  color: var(--text-1);
+}
+
+.rule-text {
+  width: 100%;
+}
+
+.rule-thresholds {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+  gap: var(--space-2);
+  margin-top: var(--space-2);
+}
+
+.rule-thresholds label {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-1);
+  font-size: var(--text-xs);
+  color: var(--text-2);
+}
+
+.rule-thresholds .rule-display-row {
+  flex-direction: row;
+}
+
+/* 问题卡上的判定标准与重复次数 */
+.criterion {
+  display: block;
+  color: var(--text-1);
+  font-size: var(--text-xs);
+  font-style: normal;
+  overflow-wrap: anywhere;
+}
+
+.repeat-note {
+  color: var(--warn);
+}
+
+.issue-rule-profile {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  flex-wrap: wrap;
+}

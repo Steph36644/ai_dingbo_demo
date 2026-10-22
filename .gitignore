@@ -1,0 +1,27 @@
+﻿node_modules/
+dist/
+out/
+.release/
+*.log
+.DS_Store
+Thumbs.db
+.env
+.env.*
+!.env.example
+*.local
+.vscode/
+.idea/
+.vite/
+/coverage/
+__pycache__/
+*.pyc
+resources/models/**
+!resources/models/README.md
+resources/native/
+
+# FunASR / ModelScope 权重缓存。F0 不下载模型；F1 才会加载 paraformer-zh-streaming。
+.cache/
+modelscope_cache/
+
+# 本地 HTML 分享包临时产物
+.trae-html-share-packages/
